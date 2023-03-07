@@ -1,108 +1,81 @@
-## Create-React-App-Lambda
+# Lotion
+In this assignment, you will create a Notion-like application named Lotion with HTML, CSS, and React.
 
-This project is a reference demo showing you how to use [Create React App v3](https://github.com/facebookincubator/create-react-app) and [netlify-lambda v1](https://github.com/netlify/netlify-lambda) together in a [Netlify Dev](https://www.netlify.com/docs/cli/?utm_source=github&utm_medium=swyx-CRAL&utm_campaign=devex#netlify-dev-beta) workflow. You can clone this and immediately be productive with a React app with serverless Netlify Functions in the same repo. Alternatively you can deploy straight to Netlify with this one-click Deploy:
+---
 
+## :foot: Steps
+- Clone the repo
+- Make sure you're inside the root directory of the repo and then run `npm install` to install all the necessary packages
+- Run `npm start` and you should be able to see the page open up on your default browser
+- Make sure to see the demo video on D2L
+- Make your changes and push to the `main` branch before the deadline to be graded
+- Create a new repo under your username and add it as a new remote to the project: `git remote add personal <github-address>`
+- Push your changes to your personal repo as well: `git push personal main`
+- Use [Netlify](https://www.netlify.com/) to deploy your application and drop the link to your website in the [NETLIFY-ADDRESS](./NETLIFY-ADDRESS.md) file
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg?utm_source=github&utm_medium=swyx-CRAL&utm_campaign=devex)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify/create-react-app-lambda&utm_source=github&utm_medium=swyx-CRAL&utm_campaign=devex)
+---
 
-> ⚠️NOTE: You may not need this project at all. [Netlify Dev](https://github.com/netlify/netlify-dev-plugin) works with `create-react-app` out of the box! Only use `netlify-lambda` if you need a build step for your functions, eg if you want to use Babel or TypeScript ([see its README for details](https://github.com/netlify/netlify-lambda/blob/master/README.md#netlify-lambda)).
+## :page_with_curl: Notes
+- Three external libraries were used for the demo:
+    - `react-router-dom` for front-end routing, which you can install by running `npm install react-router-dom`. Read more [here](https://masoudkarimif.github.io/posts/react-101/#react-router)
+    - `react-quill` for the editor, which you can install by running `npm install react-quill`. Read more [here](https://github.com/zenoamaro/react-quill)
+    - `uuid` for generating universally unique identifiers, which you can install by running `npm install uuid`. Read more [here](https://www.npmjs.com/package/uuid). Based on the algorithm you choose to implement the application, you may not need this library
+- There's no backend or database for the application. However, the data persists in the browser. You need to use `localStorage` to implement this. Read more [here](https://masoudkarimif.github.io/posts/javascript-101/#localstorage) on how to use it
+- Three different React hooks were used to build the demo:
+    - [`useState`](https://masoudkarimif.github.io/posts/react-101/#usestate)
+    - [`useEffect`](https://masoudkarimif.github.io/posts/react-101/#useeffect)
+    - [`useRef`](https://masoudkarimif.github.io/posts/react-101/#useref). Based on your solution, you may not need to use this hook
+- The demo uses a Layout route. Read more [here](https://masoudkarimif.github.io/posts/react-101/#the-layout-route)
+- You need to use a page parameter to pass the note id to the component: `/notes/1`, `/notes/2/edit`. Read more [here](https://masoudkarimif.github.io/posts/react-101/#page-parameters)
+- Based on your solution, you probably need to pass props to the child/children of the Layout component. Read more [here](https://masoudkarimif.github.io/posts/react-101/#passing-props-to-outlet)
+- You need to use the `useParams` and `useOutletContext` hooks from the `react-router-dom` library to access the page parameters and the data passed to the children of the Layout component. Read more [here](https://masoudkarimif.github.io/posts/react-101/#page-parameters) and [here](https://masoudkarimif.github.io/posts/react-101/#passing-props-to-outlet)
+- You probably need to use the `useNavigate` hook from the `react-router-dom` library to navigate to a different page at times. (hint: when you edit a note and hit save, you navigate from the edit path `/notes/note-id/edit` to the view path `/notes/note-id`). Read more [here](https://masoudkarimif.github.io/posts/react-101/#usenavigate)
+- The prompt you get when click on the Delete button is implemented using the `window.confirm` method. It returns `true` if the user confirms, and `false` if they don't:
 
-## Project Setup
+    ```js
+    const answer = window.confirm("Are you sure?");
+    if (answer) {
+      deleteNote(noteId);
+    }
+    ```
+- The page icon (the L letter) is already included in the project
+- The demo was built using Flexbox, but feel free to use a CSS framework
+- The menu icon is the HTML unicode character `&#9776;`
+- The datetime picker shown in the demo is the `<input type="datetime-local" />` HTML element
+- The value you get from the `datetime-local` element is not formatted the way it's shown in the demo. In order to format it, you can use a function like this:
 
-**Source**: The main addition to base Create-React-App is a new folder: `src/lambda`. This folder is specified and can be changed in the `package.json` script: `"build:lambda": "netlify-lambda build src/lambda"`.
+    ```js
+    const options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+    };
 
-**Dist**: Each JavaScript file in there will be built for Netlify Function deployment in `/built-lambda`, specified in [`netlify.toml`](https://www.netlify.com/docs/netlify-toml-reference/?utm_source=github&utm_medium=swyx-CRAL&utm_campaign=devex).
+    const formatDate = (when) => {
+        const formatted = new Date(when).toLocaleString("en-US", options);
+        if (formatted === "Invalid Date") {
+            return "";
+        }
+        return formatted;
+    };
+    ```
 
-As an example, we've included a small `src/lambda/hello.js` function, which will be deployed to `/.netlify/functions/hello`. We've also included an async lambda example using async/await syntax in `async-dadjoke.js`.
+## Things you may change
+- You may use a CSS framework or a different CSS method other than Flexbox. The final result needs to look like the demo
+- You may change the colors, font family, and font size
+- You may use a different library for the editor. The demo uses the `react-quill` library
+- You may use a different library for the routing. The demo uses the `react-router-dom` library
+- You may use a different library for generating ids. The demo uses the `uuid` library. You may also choose not to use a library for this based on your solution. If your solution doesn't need a UUID, it doesn't mean it's wrong
 
-## Video
+## Things you may not change (points will be deducted if you do)
+- The general layout including all the buttons
+- The routing. The application needs to use front-end routing to show or edit a note
+- The `localStorage`. The application needs to use the browser storage to persist the data
+- The editor. There needs to be a text editor to write a note
+- The deployment. The application needs to be deployed on Netlify the way we saw in the class
 
-Learn how to set this up yourself (and why everything is the way it is) from scratch in a video: https://www.youtube.com/watch?v=3ldSM98nCHI
-
-## Babel/webpack compilation
-
-All functions (inside `src/lambda`) are compiled with webpack using Babel, so you can use modern JavaScript, import npm modules, etc., without any extra setup.
-
-## Local Development
-
-```bash
-## prep steps for first time users
-npm i -g netlify-cli # Make sure you have the [Netlify CLI](https://github.com/netlify/cli) installed
-git clone https://github.com/netlify/create-react-app-lambda ## clone this repo
-cd create-react-app-lambda ## change into this repo
-yarn # install all dependencies
-
-## done every time you start up this project
-ntl dev ## nice shortcut for `netlify dev`, starts up create-react-app AND a local Node.js server for your Netlify functions
-```
-
-This fires up [Netlify Dev](https://www.netlify.com/docs/cli/?utm_source=github&utm_medium=swyx-CRAL&utm_campaign=devex#netlify-dev-beta), which:
-
-- Detects that you are running a `create-react-app` project and runs the npm script that contains `react-scripts start`, which in this project is the `start` script
-- Detects that you use `netlify-lambda` as a [function builder](https://github.com/netlify/netlify-dev-plugin/#function-builders-function-builder-detection-and-relationship-with-netlify-lambda), and runs the npm script that contains `netlify-lambda build`, which in this project is the `build:lambda` script.
-
-You can view the project locally via Netlify Dev, via `localhost:8888`.
-
-Each function will be available at the same port as well:
-
-- `http://localhost:8888/.netlify/functions/hello` and 
-- `http://localhost:8888/.netlify/functions/async-dadjoke`
-
-## Deployment
-
-During deployment, this project is configured, inside `netlify.toml` to run the build `command`: `yarn build`.
-
-`yarn build` corresponds to the npm script `build`, which uses `npm-run-all` (aka `run-p`) to concurrently run `"build:app"` (aka `react-scripts build`) and `build:lambda` (aka `netlify-lambda build src/lambda`).
-
-## Typescript
-
-<details>
-  <summary>
-    <b id="typescript">Click for instructions</b>
-  </summary>
-
-You can use Typescript in both your frontend React code (with `react-scripts` v2.1+) and your serverless functions (with `netlify-lambda` v1.1+). Follow these instructions:
-
-1. `yarn add -D typescript @types/node @types/react @types/react-dom @babel/preset-typescript @types/aws-lambda`
-2. convert `src/lambda/hello.js` to `src/lambda/hello.ts`
-3. use types in your event handler:
-
-```ts
-import { Handler, Context, Callback, APIGatewayEvent } from 'aws-lambda'
-
-interface HelloResponse {
-  statusCode: number
-  body: string
-}
-
-const handler: Handler = (event: APIGatewayEvent, context: Context, callback: Callback) => {
-  const params = event.queryStringParameters
-  const response: HelloResponse = {
-    statusCode: 200,
-    body: JSON.stringify({
-      msg: `Hello world ${Math.floor(Math.random() * 10)}`,
-      params,
-    }),
-  }
-
-  callback(undefined, response)
-}
-
-export { handler }
-```
-
-rerun and see it work!
-
-You are free to set up your `tsconfig.json` and `tslint` as you see fit.
-
-</details>
-
-**If you want to try working in Typescript on the client and lambda side**: There are a bunch of small setup details to get right. Check https://github.com/sw-yx/create-react-app-lambda-typescript for a working starter.
-
-## Routing and authentication with Netlify Identity
-
-For a full demo of routing and authentication, check this branch: https://github.com/netlify/create-react-app-lambda/pull/18 This example will not be maintained but may be helpful.
-
-## Service Worker
-
-`create-react-app`'s default service worker (in `src/index.js`) does not work with lambda functions out of the box. It prevents calling the function and returns the app itself instead ([Read more](https://github.com/facebook/create-react-app/issues/2237#issuecomment-302693219)). To solve this you have to eject and enhance the service worker configuration in the webpack config. Whitelist the path of your lambda function and you are good to go.
+## Bonous points
+- Tags. They need to be searchable. That is, when a user is picking a tag for a note, the application should suggest similar tags
+- Sorting and searching for the notes
