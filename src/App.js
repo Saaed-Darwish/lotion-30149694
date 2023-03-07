@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { v1 as uuid } from 'uuid';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from "./Sidebar.js";
 import Main from "./Main.js";
 
