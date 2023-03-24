@@ -10,6 +10,7 @@ function WriteBox({ edit }) {
   let { noteId } = useParams();
   noteId -= 1;
   const [notes, updateNote, deleteNote] = useOutletContext();
+  // eslint-disable-next-line
   let currentNote = { title: "", body: "", when: "" };
   if (noteId >= 0 && notes.length > noteId) {
     currentNote = notes[noteId];
