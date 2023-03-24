@@ -3,7 +3,7 @@ import { Outlet, useNavigate, Link } from "react-router-dom";
 import NoteList from "./NoteList";
 import { v4 as uuidv4 } from "uuid";
 import { currentDate } from "./utils";
-
+// eslint-disable-next-line
 const localStorageKey = "lotion-v1";
 
 function Layout() {
@@ -30,7 +30,8 @@ function Layout() {
   useEffect(() => {
     localStorage.setItem(localStorageKey, JSON.stringify(notes));
   }, [notes]);
-
+  
+  // eslint-disable-next-line
   useEffect(() => {
     if (currentNote < 0) {
       return;
@@ -39,8 +40,8 @@ function Layout() {
       navigate(`/notes/${currentNote + 1}`);
       return;
     }
-    navigate(`/notes/${currentNote + 1}/edit`);
-  }, [notes]);
+    navigate(`/notes/${currentNote + 1}/edit`); // eslint-disable-next-line
+  }, [notes]); // eslint-disable-next-line
 
   const saveNote = (note, index) => {
     note.body = note.body.replaceAll("<p><br></p>", "");
