@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { v1 as uuid } from 'uuid';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from "./Sidebar.js";
 import Main from "./Main.js";
-import { useNavigate } from "react-router-dom";
+//import { BrowserRouter, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+//import Layout from "./Layout.js";
 
 function App() {
   const [notes, setNotes] = useState([])
   const [activeNote, setActiveNote] = useState(false);
   const [editMode, setEditMode] = useState(true);
   const [noteNumber, setNoteNumber] = useState(0);
+  const [showSidebar, setShowSidebar] = useState();
+  //let { noteElementNumber } = useParams();
+  //const navigate = useNavigate();
 
   useEffect(() => {
+    setShowSidebar(true);
     retrieveNotes();
   }, []);
 
@@ -45,6 +49,13 @@ function App() {
   };
 
   const handleDeleteClick = (deleteid) => {
+    const answer = window.confirm("Are you sure?");
+    if (answer) {
+      deleteNote(deleteid);
+    }
+  };
+  
+  const deleteNote = (deleteid) => {
     if (notes.length > 2) {
       if (notes[0].id === deleteid) {
         setNoteNumber(notes[1].noteElement + 1);
@@ -56,26 +67,27 @@ function App() {
     setNotes(notes.filter((note) => note.id !== deleteid));
     localStorage.setItem('currentNotesArray', JSON.stringify(notes.filter((note) => note.id !== deleteid)));
 
-    if(notes.length === 2) {
+    if (notes.length === 2) {
       if (notes[0].id === deleteid) {
         setNoteNumber(notes[0].noteElement);
       }
     }
-    if(notes.length === 1) {
+    if (notes.length === 1) {
       setNoteNumber(0);
     }
   };
 
   const handleSavedClick = () => {
     setEditMode(false);
-    getActiveNote().lastModified = formatDate(new Date(Date.now()));
     let savedNote = getActiveNote();
+    savedNote.lastModified = formatDate(new Date(Date.now()));
     let retrievedNotes = JSON.parse(localStorage.getItem('currentNotesArray'));
     let savedNotes = retrievedNotes;
     let existsNote = savedNotes.find((note) => note.id === activeNote);
     if (existsNote) {
       existsNote.title = savedNote.title;
       existsNote.body = savedNote.body;
+      existsNote.lastModified = savedNote.lastModified;
     }
     else {
       savedNotes = [savedNote, ...retrievedNotes];
@@ -85,22 +97,21 @@ function App() {
 
   const handleEditClick = () => {
     setEditMode(true);
-    //useNavigate('/');
   };
 
   const setActiveNoteFunction = (noteID) => {
     let currentTemp = getActiveNote();
     if (currentTemp) {
-      if(currentTemp.id === noteID) {
+      if (currentTemp.id === noteID) {
         return;
       }
-      // Only update the previous note if the new note's body is not empty
       if (getActiveNote().body !== "<p></p>") {
         updateNote(currentTemp);
       }
     }
     setEditMode(true);
     setActiveNote(noteID);
+    //navigate(`/notes/${noteID}`);
   };
 
   const getActiveNote = () => {
@@ -138,13 +149,48 @@ function App() {
     return formatted;
   };
 
-  return (
-    <div className="App">
-      <div className="title-lotion"><h1>Lotion</h1></div>
-      <Sidebar notes={notes} handleAddNoteClick={handleAddNoteClick} handleDeleteClick={handleDeleteClick} formatDate={formatDate} activeNote={activeNote} setActiveNoteFunction={setActiveNoteFunction} />
-      <Main activeNote={getActiveNote()} updateNote={updateNote} editMode={editMode} handleSavedClick={handleSavedClick} handleEditClick={handleEditClick} formatDate={formatDate} />
-    </div>
-  );
-}
+  const toggleSidebar = () => {
+    if (showSidebar) {
+      setShowSidebar(false);
+    }
+    else {
+      setShowSidebar(true);
+    }
+  };
+
+  if (showSidebar) {
+    return (
+      <div className="App">
+        <div className="title-lotion"><h1>Lotion</h1></div>
+        <button className="sidebar-button" onClick={() => toggleSidebar()}>&#9776;</button>
+        <Sidebar notes={notes} handleAddNoteClick={handleAddNoteClick} handleDeleteClick={handleDeleteClick} formatDate={formatDate} activeNote={activeNote} setActiveNoteFunction={setActiveNoteFunction} />
+        <Main activeNote={getActiveNote()} updateNote={updateNote} editMode={editMode} handleSavedClick={handleSavedClick} handleEditClick={handleEditClick} />
+      </div>
+    );
+  };
+
+  if (!showSidebar) {
+    return (
+      <div className="App">
+        <div className="title-lotion"><h1>Lotion</h1></div>
+        <button className="sidebar-button" onClick={() => toggleSidebar()}>&#9776;</button>
+        <Main activeNote={getActiveNote()} updateNote={updateNote} editMode={editMode} handleSavedClick={handleSavedClick} handleEditClick={handleEditClick} />
+      </div>
+    );
+  };
+
+  // could not figure out the routing ...
+  /*
+  return(
+    <BrowserRouter>
+      <Routes>
+        <Route element={ <Layout notes={notes} handleAddNoteClick={handleAddNoteClick} handleDeleteClick={handleDeleteClick} activeNoteID={activeNote} setActiveNoteFunction={setActiveNoteFunction} activeNote={getActiveNote()} updateNote={updateNote} editMode={editMode} handleSavedClick={handleSavedClick} handleEditClick={handleEditClick} /> }>
+          <Route path="/notes/:noteElementNumber"></Route>
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
+  */
+};
 
 export default App;
