@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import React, { useState, useEffect } from 'react';
 
 function Main({ activeNote, updateNote, editMode, handleSavedClick, handleEditClick }) {
     const [editedBody, setEditedBody] = useState("");
@@ -39,7 +39,7 @@ function Main({ activeNote, updateNote, editMode, handleSavedClick, handleEditCl
     if (editMode) {
         return (
             <div className="main">
-                <button className="save-button" onClick={() => handleSavedClick() }>save</button>
+                <button className="save-button" onClick={() => { handleSavedClick() }}>save</button>
                 <div className="main-note-edit">
                     <input type="text" id="title" value={activeNote.title} onChange={(e) => editTitle("title", e.target.value)} />
                     <ReactQuill
